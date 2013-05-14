@@ -146,6 +146,7 @@ var container=document.getElementById('container');
 var ul=container.getElementsByTagName('ul')[0];
 
 
+
 var liSize=container.getElementsByTagName('li').length
 var  li= container.getElementsByTagName('li')[0];
     ul.style.width=getStyle(li,'width')*liSize+'px';
@@ -179,7 +180,7 @@ function mouseDown(e){
    }
    clearanimateTimer();
 
-	disX=e.pageX-getStyle(ul, 'left');
+	disX=e.clientX-getStyle(ul, 'left');
 	
 	ul.style.cursor='pointer';
 
@@ -193,11 +194,14 @@ function mouseDown(e){
 function mouseMove(e){
 	
      var	e=e||window.event;
-	 ul.style.left=e.pageX-disX+'px';
+	 
+
+	 
+	 ul.style.left=e.clientX-disX+'px';
 	 EventUtil.addEventListener(document,'mouseup',mouseUp);
 	 
-	 speed=e.pageX-lastX;
-	 	 lastX=e.pageX;
+	 speed=e.clientX-lastX;
+	 	 lastX=e.clientX;
 		 
 
 	}
