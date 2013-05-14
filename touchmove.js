@@ -201,7 +201,7 @@ function mouseMove(e){
 	 EventUtil.addEventListener(document,'mouseup',mouseUp);
 	 
 	 speed=e.clientX-lastX;
-	 	 lastX=e.clientX;
+	 lastX=e.clientX;
 		 
 
 	}
