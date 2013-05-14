@@ -166,14 +166,14 @@ function mouseDown(e){
    var	e=e||window.event;
 
    
-    if(window.captureEvents){ 
+  /*  if(window.captureEvents){ 
 	   	  e.stopPropagation();
           e.preventDefault();
 	}
 	else{
 		e.cancelBubble = true;
      window.event.returnValue = false;
-		}
+		}*/
 				
    if(timer){
 	clearInterval(timer);
@@ -181,6 +181,7 @@ function mouseDown(e){
    clearanimateTimer();
 
 	disX=e.clientX-getStyle(ul, 'left');
+	
 	
 	ul.style.cursor='pointer';
 
@@ -199,7 +200,7 @@ function mouseMove(e){
 	 
 	 ul.style.left=e.clientX-disX+'px';
 	 EventUtil.addEventListener(document,'mouseup',mouseUp);
-	 
+	 console.log(e.clientX-disX);
 	 speed=e.clientX-lastX;
 	 lastX=e.clientX;
 		 
