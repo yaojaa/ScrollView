@@ -1,4 +1,5 @@
 // JavaScript Document
+//author:yaojaa QQ:264406
 
 var Tween = {
 	Linear: function(t, b, c, d) {
@@ -206,10 +207,6 @@ function mouseMove(e){
 function mouseUp(e){
 	
 	var e=e||window.event;
-
-	var target=e.srcElement||e.target;
-
-	
 	EventUtil.removeEventListener(ul,'mousemove',mouseMove);
 	EventUtil.removeEventListener(document,'mouseup',mouseUp);
 
