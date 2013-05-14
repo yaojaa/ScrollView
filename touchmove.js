@@ -18,13 +18,24 @@ var Tween = {
 	}
 }
 
+var animateTimer=null;
+
+function clearanimateTimer(){
+	if(animateTimer){
+	clearInterval(animateTimer)
+	}
+
+	}
+
 function animate(obj,json,speed,fnEnd){
+	
 	
 	var d=speed||50;
 	var t=0;
 	var startPos=new Array;
 	var endPos=new Array;
-
+	
+	
 	
 	for(var p in json){
 		endPos[p]=json[p];
@@ -35,11 +46,11 @@ function animate(obj,json,speed,fnEnd){
 		}
 		
 	if(t<d){	
-	var timer= setInterval(function(){	
+	animateTimer= setInterval(function(){	
 		t++;
 		if(t>=d)
 			{
-				clearInterval(timer);
+				clearInterval(animateTimer);
 				if(fnEnd)
 			{
 				fnEnd();
@@ -67,6 +78,7 @@ function animate(obj,json,speed,fnEnd){
 		
 	}
 	}
+	
 
 var EventUtil={
 	addEventListener:function(element,type,fn){
@@ -161,9 +173,10 @@ function mouseDown(e){
      window.event.returnValue = false;
 		}
 				
-
+   if(timer){
 	clearInterval(timer);
-
+   }
+   clearanimateTimer();
 
 	disX=e.pageX-getStyle(ul, 'left');
 	
@@ -190,12 +203,20 @@ function mouseMove(e){
 	
 	//Êó±êµ¯Æð
 	
-function mouseUp(){
+function mouseUp(e){
+	
+	var e=e||window.event;
+
+	var target=e.srcElement||e.target;
+
 	
 	EventUtil.removeEventListener(ul,'mousemove',mouseMove);
+	EventUtil.removeEventListener(document,'mouseup',mouseUp);
+
 	document.onmouseup=null;
     document.onmouseover=null;
 	ul.style.cursor='';
+	
 	
 	if(parseInt(ul.style.left)>0){
 		
@@ -204,7 +225,7 @@ function mouseUp(){
 		}
 	else if(parseInt(ul.style.left)<getStyle(container,'width')-parseInt(ul.style.width)){
 		
-			animate(ul, {left:getStyle(container,'width')-parseInt(ul.style.width)},30)
+	animate(ul, {left:getStyle(container,'width')-parseInt(ul.style.width)},30)
 	}	
 		
 	else{
@@ -212,12 +233,10 @@ function mouseUp(){
 	if (Math.abs(speed)<2){
 		
 		return;
-		
 		}	
 		
     throwIt(ul,speed)
 	}
-	
 	}
 	
 function throwIt(obj,speed){
