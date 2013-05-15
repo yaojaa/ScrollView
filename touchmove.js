@@ -19,25 +19,13 @@ var Tween = {
 	}
 }
 
-var animateTimer=null;
-
-function clearanimateTimer(){
-	if(animateTimer){
-	clearInterval(animateTimer)
-	}
-
-	}
-
+var animateTimer;
+var t=0;
 function animate(obj,json,speed,fnEnd){
 	
-	
 	var d=speed||50;
-	var t=0;
 	var startPos=new Array;
 	var endPos=new Array;
-	
-	
-	
 	for(var p in json){
 		endPos[p]=json[p];
 		startPos[p]=parseInt(getStyle(obj,p));
@@ -46,71 +34,114 @@ function animate(obj,json,speed,fnEnd){
 			}
 		}
 		
-	if(t<d){	
-	animateTimer= setInterval(function(){	
-		t++;
-		if(t>=d)
-			{
-				clearInterval(animateTimer);
-				if(fnEnd)
-			{
-				fnEnd();
-			}
-			}
+	var d=speed||50;
 		
+	if(t<d){	
+	
+	
+	 if(animateTimer){
+	clearInterval(animateTimer);
+   }
+	
+  animateTimer= setInterval(function(){	
+		t++;
+		
+		if(t<=d){
+			
+			
+			//do someing....
+		console.log(t)
+			
 		for(var styleName in json){
 		 b=0;
 		 b=startPos[styleName];
-		var c=endPos[styleName]-b
-
+		var c=endPos[styleName]-b;
 		
-	if(styleName=='opacity'){
-		obj.style.filter='alpha(opacity:'+Math.ceil(Tween.Quad.easeOut(t,b,c,d))+')';
-		obj.style.opacity=Math.ceil(Tween.Quad.easeOut(t,b,c,d))/100;
-		}
-		else{
-
-	obj.style[styleName] =Math.ceil(Tween.Quad.easeOut(t,b,c,d)) + "px";
+			 if(styleName=='opacity'){
+			  obj.style.filter='alpha(opacity:'+Math.ceil(Tween.Quad.easeOut(t,b,c,d))+')';
+			  obj.style.opacity=Math.ceil(Tween.Quad.easeOut(t,b,c,d))/100;
+			  }
+			  else{
+			 obj.style[styleName] =Math.ceil(Tween.Quad.easeOut(t,b,c,d)) + "px";
+			  }
+		
 		}
 			
-		}
 
-         },30)
+			
+			}
+		else{
+				clearInterval(animateTimer);
+				t=0;	
+			}	
+			
+		
+
+		}
+		,20)
 		
 	}
+	
+
 	}
 	
 
 var EventUtil={
-	addEventListener:function(element,type,fn){
-		if(element.addEventListener){
-		    element.addEventListener(type,fn,false)
-			
-			}
-		else if(element.attachEvent){
-			
-			element.attachEvent('on'+type,fn)
-			
-			}
-		else{
-			element['on' + type]=fn
-			}
-				},
-				
-	removeEventListener:function(element,type,fn){
-		if(element.removeEventListener){
-		    element.removeEventListener(type,fn,false)
-			
-			}
-		else if(element.detachEvent){
-			
-			element.detachEvent('on'+type,fn)
-			
-			}
-		else{
-			element['on' + type]=fn
-			}
-				},
+	
+    addHandler: function (element, type, handler) {
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent("on" + type, handler);
+        } else {
+            element["on" + type] = handler;
+        }
+    },
+	
+    removeHandler: function (element, type, handler) {
+        if (element.removeEventListener) {
+            element.removeEventListener(type, handler, false);
+        } else if (element.detachEvent) {
+            element.detachEvent("on" + type, handler);
+        } else {
+            element["on" + type] = null;
+        }
+    },
+
+    getEvent: function (event) {
+        return event ? event : window.event;
+    },
+    getTarget: function (event) {
+        return event.target || event.srcElement;
+    },
+	
+    preventDefault: function (event) {
+        if (event.preventDefault) {
+            event.preventDefault();
+        } else {
+            event.returnValue = false;
+        }
+    },
+	
+    stopPropagation: function (event) {
+        if (event.stopPropagation) {
+            event.stopPropagation();
+        } else {
+            event.cancelBubbles = true;
+        }
+    },
+	
+    getRelatedTarget: function (event) {
+        if (event.relatedTarger) {
+            return event.relatedTarget;
+        } else if (event.toElement) {
+            return event.toElement;
+        } else if (event.fromElement) {
+            return event.fromElement;
+        } else { return null; }
+
+    },
+	
 	 getWheelDelta: function (event) {
 		 
         if (event.wheelDelta) {
@@ -122,20 +153,16 @@ var EventUtil={
     }
 	}
 
-function getStyle(obj, styleName)
-    {
-
+function getStyle(obj, styleName){
 
 	if(obj.currentStyle)
 	{
 		
-
 		return parseInt(obj.currentStyle[styleName]);
 		
 	}
 	else
 	{
-
 		return parseInt (getComputedStyle(obj, false)[styleName]);
 	}
     }
@@ -158,35 +185,28 @@ var lastX=0;
 var speed=0;
 var timer;
 	
-EventUtil.addEventListener(ul,'mousedown',mouseDown)
+EventUtil.addHandler(ul,'mousedown',mouseDown)
 	
 	//Êó±ê°´ÏÂ
 function mouseDown(e){
 	
-   var	e=e||window.event;
-
+	var ev=EventUtil.getEvent(e);
+	
+	EventUtil.preventDefault(ev);
    
-  /*  if(window.captureEvents){ 
-	   	  e.stopPropagation();
-          e.preventDefault();
-	}
-	else{
-		e.cancelBubble = true;
-     window.event.returnValue = false;
-		}*/
-				
-   if(timer){
+ if(timer){
 	clearInterval(timer);
    }
-   clearanimateTimer();
-
-	disX=e.clientX-getStyle(ul, 'left');
+   
+ if(animateTimer){
+	  
+	  clearInterval(animateTimer)
+	}
+   
+	disX=ev.clientX-getStyle(ul, 'left');
 	
-	
-	ul.style.cursor='pointer';
-
-	EventUtil.addEventListener(ul,'mousemove',mouseMove)
-	EventUtil.addEventListener(document,'mouseup',mouseUp);
+	EventUtil.addHandler(ul,'mousemove',mouseMove)
+	EventUtil.addHandler(document,'mouseup',mouseUp);
 
 	}
 	
@@ -194,15 +214,14 @@ function mouseDown(e){
 	
 function mouseMove(e){
 	
-     var	e=e||window.event;
+	var ev=EventUtil.getEvent(e);
 	 
-
+	 EventUtil.preventDefault(ev);
 	 
-	 ul.style.left=e.clientX-disX+'px';
-	 EventUtil.addEventListener(document,'mouseup',mouseUp);
-	 console.log(e.clientX-disX);
-	 speed=e.clientX-lastX;
-	 lastX=e.clientX;
+	 ul.style.left=ev.clientX-disX+'px';
+	 EventUtil.addHandler(document,'mouseup',mouseUp);
+	 speed=ev.clientX-lastX;
+	 lastX=ev.clientX;
 		 
 
 	}
@@ -211,37 +230,42 @@ function mouseMove(e){
 	
 function mouseUp(e){
 	
-	var e=e||window.event;
-	EventUtil.removeEventListener(ul,'mousemove',mouseMove);
-	EventUtil.removeEventListener(document,'mouseup',mouseUp);
+	var ev=EventUtil.getEvent(e);
+	EventUtil.removeHandler(ul,'mousemove',mouseMove);
+	EventUtil.removeHandler(document,'mouseup',mouseUp);
 
 	document.onmouseup=null;
     document.onmouseover=null;
-	ul.style.cursor='';
-	
 	
 	if(parseInt(ul.style.left)>0){
 		
-		animate(ul, {left:0},30)
+	 animate(ul, {left:0},15);
+	  
 		
 		}
 	else if(parseInt(ul.style.left)<getStyle(container,'width')-parseInt(ul.style.width)){
 		
-	animate(ul, {left:getStyle(container,'width')-parseInt(ul.style.width)},30)
+     animate(ul, {left:getStyle(container,'width')-parseInt(ul.style.width)},15)
 	}	
 		
 	else{
 		
 	if (Math.abs(speed)<2){
-		
 		return;
+		}
+	    else{
+		  
+				
+         throwIt(ul,speed)	
 		}	
-		
-    throwIt(ul,speed)
+			
+
 	}
 	}
 	
 function throwIt(obj,speed){
+			  document.title='0000'
+
 	
 	var speed=speed;
 	
@@ -269,7 +293,6 @@ function throwIt(obj,speed){
 			
 		if(parseInt(obj.style.left)<getStyle(container,'width')-parseInt(obj.style.width)){
 					clearInterval(timer);
-					console.log(parseInt(obj.style.width))
 		animate(obj, {left:getStyle(container,'width')-parseInt(obj.style.width)},30)
 			
 			}	
