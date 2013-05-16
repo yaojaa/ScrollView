@@ -21,7 +21,17 @@ var Tween = {
 
 var animateTimer;
 var t=0;
+
+function clearAnimate(){
+		clearInterval(animateTimer);
+		 t=0;
+
+	}
+
+
 function animate(obj,json,speed,fnEnd){
+	
+	
 	
 	var d=speed||50;
 	var startPos=new Array;
@@ -38,19 +48,12 @@ function animate(obj,json,speed,fnEnd){
 		
 	if(t<d){	
 	
-	
-	 if(animateTimer){
-	clearInterval(animateTimer);
-   }
+ clearAnimate();
 	
   animateTimer= setInterval(function(){	
 		t++;
 		
 		if(t<=d){
-			
-			
-			//do someing....
-		console.log(t)
 			
 		for(var styleName in json){
 		 b=0;
@@ -198,10 +201,7 @@ function mouseDown(e){
 	clearInterval(timer);
    }
    
- if(animateTimer){
-	  
-	  clearInterval(animateTimer)
-	}
+   clearAnimate();
    
 	disX=ev.clientX-getStyle(ul, 'left');
 	
@@ -218,7 +218,12 @@ function mouseMove(e){
 	 
 	 EventUtil.preventDefault(ev);
 	 
-	 ul.style.left=ev.clientX-disX+'px';
+	 var left=ev.clientX-disX;
+	 
+	 left=left>100?100:left=left<getStyle(container,'width')-parseInt(ul.style.width)-100?getStyle(container,'width')-parseInt(ul.style.width)-100:left;
+	 
+	 
+	 ul.style.left=left+'px';
 	 EventUtil.addHandler(document,'mouseup',mouseUp);
 	 speed=ev.clientX-lastX;
 	 lastX=ev.clientX;
@@ -234,13 +239,9 @@ function mouseUp(e){
 	EventUtil.removeHandler(ul,'mousemove',mouseMove);
 	EventUtil.removeHandler(document,'mouseup',mouseUp);
 
-	document.onmouseup=null;
-    document.onmouseover=null;
 	
 	if(parseInt(ul.style.left)>0){
-		
 	 animate(ul, {left:0},15);
-	  
 		
 		}
 	else if(parseInt(ul.style.left)<getStyle(container,'width')-parseInt(ul.style.width)){
@@ -264,9 +265,7 @@ function mouseUp(e){
 	}
 	
 function throwIt(obj,speed){
-			  document.title='0000'
 
-	
 	var speed=speed;
 	
 	clearInterval(timer);
